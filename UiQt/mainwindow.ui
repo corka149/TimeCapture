@@ -123,6 +123,8 @@
      <string>Menu</string>
     </property>
     <addaction name="action_AddDay"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -138,6 +140,11 @@
   <action name="action_AddDay">
    <property name="text">
     <string>Add day</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>

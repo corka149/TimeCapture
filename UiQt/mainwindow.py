@@ -75,7 +75,11 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusBar)
         self.action_AddDay = QtWidgets.QAction(MainWindow)
         self.action_AddDay.setObjectName("action_AddDay")
+        self.action_Exit = QtWidgets.QAction(MainWindow)
+        self.action_Exit.setObjectName("action_Exit")
         self.menuMenu.addAction(self.action_AddDay)
+        self.menuMenu.addSeparator()
+        self.menuMenu.addAction(self.action_Exit)
         self.menuBar.addAction(self.menuMenu.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -99,4 +103,5 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_overview), _translate("MainWindow", "Overview"))
         self.menuMenu.setTitle(_translate("MainWindow", "Menu"))
         self.action_AddDay.setText(_translate("MainWindow", "Add day"))
+        self.action_Exit.setText(_translate("MainWindow", "Exit"))
 
