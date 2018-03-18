@@ -1,5 +1,4 @@
 from qtpy.QtWidgets import QDialog
-from qtpy.QtCore import Qt
 from UiQt.datedialog import Ui_Dialog
 from datetime import date
 
@@ -18,10 +17,6 @@ class DateDialog(QDialog):
         d = self.__dialog.dateEdit_WorkingDate.date()
         d.setDate(now.year, now.month, now.day)
         self.__dialog.dateEdit_WorkingDate.setDate(d)
-
-    def __set_modal(self):
-        self.setWindowModality(Qt.WindowModal)
-        self.setModal(True)
 
     def get_working_date(self) -> date:
         d = self.__dialog.dateEdit_WorkingDate.date()
