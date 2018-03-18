@@ -15,17 +15,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Time Capture")
 
         self.datedialog = DateDialog()
-        
+
         self.ui.action_AddDay.triggered.connect(self.add_new_day)
         self.ui.action_Exit.triggered.connect(self.close)
 
     def add_new_day(self):
         self.datedialog.exec_()
-        # now = date.today()
-        # list_len = self.ui.list_days.count()
-        # items = [self.ui.list_days.item(i).text() for i in range(list_len)]
-        # if not str(now) in items:
-        #     self.ui.list_days.addItem(str(now))
+        working_day = self.datedialog.get_working_date()
+        list_len = self.ui.list_days.count()
+        items = [self.ui.list_days.item(i).text() for i in range(list_len)]
+        if not str(working_day) in items:
+            self.ui.list_days.addItem(str(working_day))
 
 
 app = QApplication(sys.argv)
