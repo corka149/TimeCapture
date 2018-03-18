@@ -2,7 +2,6 @@ import sys
 from qtpy.QtWidgets import QMainWindow, QApplication
 from UiQt.mainwindow import Ui_MainWindow
 from datedialog import DateDialog
-from datetime import date
 
 
 class MainWindow(QMainWindow):
@@ -14,7 +13,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.setWindowTitle("Time Capture")
 
-        self.datedialog = DateDialog()
+        self.datedialog = DateDialog(self)
 
         self.ui.action_AddDay.triggered.connect(self.add_new_day)
         self.ui.action_Exit.triggered.connect(self.close)

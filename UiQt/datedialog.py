@@ -18,6 +18,7 @@ class Ui_Dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
+        Dialog.setModal(True)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(Dialog)
@@ -28,6 +29,12 @@ class Ui_Dialog(object):
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.dateEdit_WorkingDate = QtWidgets.QDateEdit(Dialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.dateEdit_WorkingDate.sizePolicy().hasHeightForWidth())
+        self.dateEdit_WorkingDate.setSizePolicy(sizePolicy)
+        self.dateEdit_WorkingDate.setCalendarPopup(True)
         self.dateEdit_WorkingDate.setObjectName("dateEdit_WorkingDate")
         self.verticalLayout.addWidget(self.dateEdit_WorkingDate)
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
@@ -45,4 +52,5 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.label.setText(_translate("Dialog", "Working date"))
+        self.dateEdit_WorkingDate.setDisplayFormat(_translate("Dialog", "dd.MM.yyyy"))
 
