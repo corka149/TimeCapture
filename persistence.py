@@ -18,6 +18,10 @@ class WorkingEntry(Base):
     order = Column(String(250), nullable=False)
     comment = Column(String(1000), nullable=True)
 
+    def __str__(self):
+        return "id: {}, belongs_to_day: {}, start_time: {}, end_time: {}, order: {}, commet: {}"\
+            .format(self.id, self.belongs_to_day, self.start_time, self.end_time, self.order, self.comment)
+
 
 def insert_working_entry(start_time: time, end_time: time, order: String, comment: String):
     session: Session = DBSession()
@@ -46,6 +50,11 @@ def update_working_entry(entry: WorkingEntry):
 def find_working_entry_by_id(id):
     session: Session = DBSession()
     return session.query(WorkingEntry).filter(WorkingEntry.id == id).first()
+
+
+def find_all_working_entries():
+    session: Session = DBSession()
+    return session.query(WorkingEntry).all()
 
 
 class WorkingDay(Base):
@@ -94,7 +103,17 @@ def find_working_day_by_id(id):
     return session.query(WorkingDay).filter(WorkingDay.id == id).first()
 
 
+def find_working_day_by_date(dat: date):
+    session: Session = DBSession()
+    return session.query(WorkingDay).filter(WorkingDay.working_date == dat).first()
+
+
+def find_all_working_days() -> dict:
+    session: Session = DBSession()
+    return session.query(WorkingDay).all()
+
+
 # Don't move else it wouldn't create the correct schema!
-engine = create_engine("sqlite:///timecapture.db", echo=True)
+engine = create_engine("sqlite:///timecapture.db", echo=False)
 Base.metadata.create_all(engine)
 DBSession = sessionmaker(bind=engine)

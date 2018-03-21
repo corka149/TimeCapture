@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="1">
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="tabWidget_Details">
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -46,9 +46,9 @@
          </spacer>
         </item>
         <item row="1" column="0">
-         <widget class="QPushButton" name="pushButton_addColumn">
+         <widget class="QPushButton" name="pushButton_addRow">
           <property name="text">
-           <string>Add column</string>
+           <string>Add row</string>
           </property>
          </widget>
         </item>
