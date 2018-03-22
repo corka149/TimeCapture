@@ -23,9 +23,10 @@ class WorkingEntry(Base):
             .format(self.id, self.belongs_to_day, self.start_time, self.end_time, self.order, self.comment)
 
 
-def insert_working_entry(start_time: time, end_time: time, order: String, comment: String):
+def insert_working_entry(belongs_to_day, start_time: time, end_time: time, order: String, comment: String):
     session: Session = DBSession()
-    new_entry = WorkingEntry(start_time=start_time, end_time=end_time, order=order, comment=comment)
+    new_entry = WorkingEntry(belongs_to_day=belongs_to_day, start_time=start_time, end_time=end_time, order=order,
+                             comment=comment)
     session.add(new_entry)
     session.commit()
 
@@ -34,6 +35,14 @@ def delete_working_entry(entry: WorkingEntry):
     session: Session = DBSession()
     entry = session.query(WorkingEntry).filter(WorkingEntry.id == entry.id).first()
     session.delete(entry)
+    session.commit()
+
+
+def delete_working_entry_by_working_day(working_day_id):
+    session: Session = DBSession()
+    entries = session.query(WorkingEntry).filter(WorkingEntry.belongs_to_day == working_day_id).all()
+    for e in entries:
+        session.delete(e)
     session.commit()
 
 
@@ -62,7 +71,7 @@ class WorkingDay(Base):
 
     id = Column(Integer, primary_key=True)
     working_date = Column(Date, unique=True)
-    start_of_work = Column(Time, nullable=False)
+    start_of_work = Column(Time, nullable=True)
     planned_end_of_work = Column(Time, nullable=True)
     comment = Column(String, nullable=True)
 
@@ -71,8 +80,8 @@ class WorkingDay(Base):
                 .format(self.id, self.working_date, self.start_of_work, self.planned_end_of_work, self.comment)
 
 
-def insert_working_day(working_date: date, start_of_work: time, planned_end_of_work: time,
-                       comment: String) -> WorkingDay:
+def insert_working_day(working_date: date, start_of_work: time=None, planned_end_of_work: time=None,
+                       comment: String=None) -> WorkingDay:
     session: Session = DBSession()
     new_entry = WorkingDay(working_date=working_date, start_of_work=start_of_work,
                            planned_end_of_work=planned_end_of_work, comment=comment)

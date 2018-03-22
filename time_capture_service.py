@@ -25,3 +25,12 @@ class TimeCaptureService:
                 self._selected_day = p.find_working_day_by_date(date(int(val[0]), int(val[1]), int(val[2])))
         else:
             self._selected_day = value
+
+    def updates_working_entries(self, entries):
+        p.delete_working_entry_by_working_day(self.selected_day.id)
+        for row in entries:
+            p.insert_working_entry(self.selected_day.working_date, row["start_time"], row["end_time"], row["order"],
+                                   row["comment"])
+
+    def add_new_working_day(self, wd: date):
+        p.insert_working_day(wd)
