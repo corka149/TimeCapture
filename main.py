@@ -1,9 +1,16 @@
 import sys
-from qtpy.QtWidgets import QMainWindow, QApplication, QListWidgetItem, QTimeEdit
+from qtpy.QtWidgets import QMainWindow, QApplication, QListWidgetItem, QTimeEdit, QTableWidgetItem
+from qtpy.QtCore import QTime
 from UiQt.mainwindow import Ui_MainWindow
 from datedialog import DateDialog
 from time_capture_service import TimeCaptureService
 from datetime import time
+from bindings import WorkingEntryKey
+
+START_TIME_COL = 0
+END_TIME_COL = 1
+ORDER_COL = 2
+COMMENT_COL = 3
 
 
 class MainWindow(QMainWindow):
@@ -40,17 +47,22 @@ class MainWindow(QMainWindow):
         for i in range(row):
             row = dict()
 
-            hr = self.ui.table_times.cellWidget(i, 0).time().hour()
-            min = self.ui.table_times.cellWidget(i, 0).time().minute()
-            row["start_time"] = time(hr, min)
-            hr = self.ui.table_times.cellWidget(i, 1).time().hour()
-            min = self.ui.table_times.cellWidget(i, 1).time().minute()
-            row["end_time"] = time(hr, min)
+            hr = self.ui.table_times.cellWidget(i, START_TIME_COL).time().hour()
+            min = self.ui.table_times.cellWidget(i, START_TIME_COL).time().minute()
+            row[WorkingEntryKey.START_TIME] = time(hr, min)
+            hr = self.ui.table_times.cellWidget(i, END_TIME_COL).time().hour()
+            min = self.ui.table_times.cellWidget(i, END_TIME_COL).time().minute()
+            row[WorkingEntryKey.END_TIME] = time(hr, min)
 
-            row["order"] = self.ui.table_times.item(i, 2).text()
-            row["comment"] = self.ui.table_times.item(i, 3).text()
+            if self.ui.table_times.item(i, ORDER_COL) is not None:
+                row[WorkingEntryKey.ORDER] = self.ui.table_times.item(i, ORDER_COL).text()
+            else:
+                row[WorkingEntryKey.ORDER] = ""
+            if self.ui.table_times.item(i, COMMENT_COL) is not None:
+                row[WorkingEntryKey.COMMENT] = self.ui.table_times.item(i, COMMENT_COL).text()
+            else:
+                row[WorkingEntryKey.COMMENT] = ""
             data.append(row)
-
         return data
 
     def save_table(self):
@@ -66,14 +78,36 @@ class MainWindow(QMainWindow):
             self.time_capture_service.add_new_working_day(working_day)
 
     def activate_details(self, item: QListWidgetItem):
+        row = 0
         self.ui.tabWidget_Details.setEnabled(True)
         self.time_capture_service.selected_day = item.text()
+        entries = self.time_capture_service.load_working_entries(item.text())
+
+        for i in range(self.ui.table_times.rowCount() + 1):
+            self.ui.table_times.removeRow(i)
+
+        print(self.ui.table_times.rowCount())
+        if entries is not None:
+            for e in entries:
+                self.ui.table_times.insertRow(row)
+                qte = QTimeEdit(self.ui.table_times)
+                qte.setTime(e[WorkingEntryKey.START_TIME])
+                self.ui.table_times.setCellWidget(row, START_TIME_COL, qte)
+
+                qte = QTimeEdit(self.ui.table_times)
+                qte.setTime(e[WorkingEntryKey.END_TIME])
+                self.ui.table_times.setCellWidget(row, END_TIME_COL, qte)
+
+                self.ui.table_times.setItem(row, ORDER_COL, QTableWidgetItem(e[WorkingEntryKey.ORDER]))
+                self.ui.table_times.setItem(row, COMMENT_COL, QTableWidgetItem(e[WorkingEntryKey.COMMENT]))
+                row += 1
+            self.ui.table_times.resizeRowsToContents()
 
     def add_row(self):
         row = self.ui.table_times.rowCount()
         self.ui.table_times.insertRow(row)
-        self.ui.table_times.setCellWidget(row, 0, QTimeEdit(self.ui.table_times))
-        self.ui.table_times.setCellWidget(row, 1, QTimeEdit(self.ui.table_times))
+        self.ui.table_times.setCellWidget(row, START_TIME_COL, QTimeEdit(self.ui.table_times))
+        self.ui.table_times.setCellWidget(row, END_TIME_COL, QTimeEdit(self.ui.table_times))
         self.ui.table_times.resizeRowsToContents()
 
 
