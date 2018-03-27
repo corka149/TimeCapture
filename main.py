@@ -83,10 +83,9 @@ class MainWindow(QMainWindow):
         self.time_capture_service.selected_day = item.text()
         entries = self.time_capture_service.load_working_entries(item.text())
 
-        for i in range(self.ui.table_times.rowCount() + 1):
+        for i in reversed(range(self.ui.table_times.rowCount())):
             self.ui.table_times.removeRow(i)
 
-        print(self.ui.table_times.rowCount())
         if entries is not None:
             for e in entries:
                 self.ui.table_times.insertRow(row)
