@@ -1,11 +1,12 @@
 import sys
 from qtpy.QtWidgets import QMainWindow, QApplication, QListWidgetItem, QTimeEdit, QTableWidgetItem
-from qtpy.QtCore import QTime
 from UiQt.mainwindow import Ui_MainWindow
 from datedialog import DateDialog
 from time_capture_service import TimeCaptureService
 from datetime import time
 from bindings import WorkingEntryKey
+from time_capture_assets import Assets
+
 
 START_TIME_COL = 0
 END_TIME_COL = 1
@@ -111,6 +112,7 @@ class MainWindow(QMainWindow):
 
 
 app = QApplication(sys.argv)
+app.setWindowIcon(Assets.load_icon())
 window = MainWindow()
 window.showMaximized()
 
