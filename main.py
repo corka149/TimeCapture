@@ -1,11 +1,13 @@
 import sys
-from qtpy.QtWidgets import QMainWindow, QApplication, QListWidgetItem, QTimeEdit, QTableWidgetItem, QCheckBox
+from qtpy.QtWidgets import QMainWindow, QApplication, QListWidgetItem, QTimeEdit, QTableWidgetItem, QCheckBox, \
+    QDoubleSpinBox, QTableWidget
 from UiQt.mainwindow import Ui_MainWindow
 from datedialog import DateDialog
 from time_capture_service import TimeCaptureService
 from datetime import time
-from bindings import WorkingEntryKey
+from bindings import WorkingEntryKey as wee, BookingKey as bk
 from time_capture_assets import Assets
+from errors import NoOrderProvidedError
 
 
 # Working entry
@@ -47,10 +49,11 @@ class MainWindow(QMainWindow):
         self.ui.action_Exit.triggered.connect(self.close)
         self.ui.list_days.itemClicked.connect(self.activate_details)
         self.ui.pushButton_addRow.clicked.connect(self.add_entry_row)
-        self.ui.pushButton_save.clicked.connect(self.save_table)
+        self.ui.pushButton_save.clicked.connect(self.save_entity_table)
         self.ui.pushButton_addBookRow.clicked.connect(self.add_booking_row)
+        self.ui.pushButton_saveBookRow.clicked.connect(self.save_booking_table)
 
-    def __transform_table__(self):
+    def __transform_entity_table__(self):
         row = self.ui.table_times.rowCount()
         data = list()
 
@@ -59,24 +62,49 @@ class MainWindow(QMainWindow):
 
             hr = self.ui.table_times.cellWidget(i, E_START_TIME_COL).time().hour()
             min = self.ui.table_times.cellWidget(i, E_START_TIME_COL).time().minute()
-            row[WorkingEntryKey.START_TIME] = time(hr, min)
+            row[wee.START_TIME] = time(hr, min)
             hr = self.ui.table_times.cellWidget(i, E_END_TIME_COL).time().hour()
             min = self.ui.table_times.cellWidget(i, E_END_TIME_COL).time().minute()
-            row[WorkingEntryKey.END_TIME] = time(hr, min)
+            row[wee.END_TIME] = time(hr, min)
 
             if self.ui.table_times.item(i, E_ORDER_COL) is not None:
-                row[WorkingEntryKey.ORDER] = self.ui.table_times.item(i, E_ORDER_COL).text()
+                row[wee.ORDER] = self.ui.table_times.item(i, E_ORDER_COL).text()
             else:
-                row[WorkingEntryKey.ORDER] = ""
+                row[wee.ORDER] = ""
             if self.ui.table_times.item(i, E_COMMENT_COL) is not None:
-                row[WorkingEntryKey.COMMENT] = self.ui.table_times.item(i, E_COMMENT_COL).text()
+                row[wee.COMMENT] = self.ui.table_times.item(i, E_COMMENT_COL).text()
             else:
-                row[WorkingEntryKey.COMMENT] = ""
+                row[wee.COMMENT] = ""
             data.append(row)
         return data
 
-    def save_table(self):
-        self.time_capture_service.updates_working_entries(self.__transform_table__())
+    def __transform_booking_table__(self):
+        row = self.ui.table_bookings.rowCount()
+        data = list()
+
+        for i in range(row):
+            row = dict()
+            table: QTableWidget = self.ui.table_bookings
+            row[bk.BOOKED] = table.cellWidget(i, B_BOOKED).isChecked()
+            row[bk.LOGGED] = table.cellWidget(i, B_LOGGED).isChecked()
+            row[bk.HOURS] = table.cellWidget(i, B_HOURS).value()
+
+            if table.item(i, B_ORDER) is not None:
+                row[bk.ORDER] = table.item(i, B_ORDER).text()
+            else:
+                raise NoOrderProvidedError("An order is required!")
+            if table.item(i, B_COMMENT) is not None:
+                row[bk.COMMENT] = table.item(i, B_COMMENT).text()
+            else:
+                row[bk.COMMENT] = ""
+            data.append(row)
+        return data
+
+    def save_entity_table(self):
+        self.time_capture_service.update_working_entries(self.__transform_entity_table__())
+
+    def save_booking_table(self):
+        self.time_capture_service.update_bookings(self.__transform_booking_table__())
 
     def add_new_day(self):
         self.datedialog.exec_()
@@ -100,15 +128,15 @@ class MainWindow(QMainWindow):
             for e in entries:
                 self.ui.table_times.insertRow(row)
                 qte = QTimeEdit(self.ui.table_times)
-                qte.setTime(e[WorkingEntryKey.START_TIME])
+                qte.setTime(e[wee.START_TIME])
                 self.ui.table_times.setCellWidget(row, E_START_TIME_COL, qte)
 
                 qte = QTimeEdit(self.ui.table_times)
-                qte.setTime(e[WorkingEntryKey.END_TIME])
+                qte.setTime(e[wee.END_TIME])
                 self.ui.table_times.setCellWidget(row, E_END_TIME_COL, qte)
 
-                self.ui.table_times.setItem(row, E_ORDER_COL, QTableWidgetItem(e[WorkingEntryKey.ORDER]))
-                self.ui.table_times.setItem(row, E_COMMENT_COL, QTableWidgetItem(e[WorkingEntryKey.COMMENT]))
+                self.ui.table_times.setItem(row, E_ORDER_COL, QTableWidgetItem(e[wee.ORDER]))
+                self.ui.table_times.setItem(row, E_COMMENT_COL, QTableWidgetItem(e[wee.COMMENT]))
                 row += 1
             self.ui.table_times.resizeRowsToContents()
 
@@ -124,6 +152,7 @@ class MainWindow(QMainWindow):
         self.ui.table_bookings.insertRow(row)
         self.ui.table_bookings.setCellWidget(row, B_BOOKED, QCheckBox(self.ui.table_bookings))
         self.ui.table_bookings.setCellWidget(row, B_LOGGED, QCheckBox(self.ui.table_bookings))
+        self.ui.table_bookings.setCellWidget(row, B_HOURS, QDoubleSpinBox(self.ui.table_bookings))
         self.ui.table_times.resizeRowsToContents()
 
 

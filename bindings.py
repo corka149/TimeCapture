@@ -6,7 +6,7 @@ class WorkingEntryKey:
     COMMENT = "comment"
 
 
-class WorkingBookingKey:
+class BookingKey:
 
     ORDER = "order"
     HOURS = "hours"

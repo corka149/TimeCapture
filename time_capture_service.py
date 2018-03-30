@@ -1,7 +1,7 @@
 import persistence as p
 from persistence import WorkingDay, WorkingEntry
 from datetime import date
-from bindings import WorkingEntryKey
+from bindings import WorkingEntryKey as wee, BookingKey as bk
 
 
 class TimeCaptureService:
@@ -27,11 +27,11 @@ class TimeCaptureService:
         else:
             self._selected_day = value
 
-    def updates_working_entries(self, entries):
+    def update_working_entries(self, entries):
         p.delete_working_entry_by_working_day(self.selected_day.id)
         for row in entries:
-            p.insert_working_entry(self.selected_day.id, row[WorkingEntryKey.START_TIME], row[WorkingEntryKey.END_TIME],
-                                   row[WorkingEntryKey.ORDER], row[WorkingEntryKey.COMMENT])
+            p.insert_working_entry(self.selected_day.id, row[wee.START_TIME], row[wee.END_TIME],
+                                   row[wee.ORDER], row[wee.COMMENT])
 
     def add_new_working_day(self, wd: date):
         p.insert_working_day(wd)
@@ -43,14 +43,19 @@ class TimeCaptureService:
         we_list = list()
         for we in p.find_all_working_entries():
             if wd.id == we.belongs_to_day:
-                we_list.append(tranform_entry_dict(we))
+                we_list.append(transform_entry_dict(we))
         return we_list
 
+    def update_bookings(self, bookings):
+        p.delete_booking_by_day(self.selected_day)
+        for r in bookings:
+            p.insert_booking(self.selected_day.id, r[bk.ORDER], r[bk.HOURS], r[bk.BOOKED], r[bk.LOGGED], r[bk.COMMENT])
 
-def tranform_entry_dict(entry: WorkingEntry) -> dict:
+
+def transform_entry_dict(entry: WorkingEntry) -> dict:
     d = dict()
-    d[WorkingEntryKey.START_TIME] = entry.start_time
-    d[WorkingEntryKey.END_TIME] = entry.end_time
-    d[WorkingEntryKey.ORDER] = entry.order
-    d[WorkingEntryKey.COMMENT] = entry.comment
+    d[wee.START_TIME] = entry.start_time
+    d[wee.END_TIME] = entry.end_time
+    d[wee.ORDER] = entry.order
+    d[wee.COMMENT] = entry.comment
     return d

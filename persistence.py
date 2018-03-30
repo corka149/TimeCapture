@@ -157,6 +157,11 @@ def delete_booking(booking: Booking):
     session.commit()
 
 
+def delete_booking_by_day(day: WorkingDay):
+    for i in find_booking_by_day(day):
+        delete_booking(i)
+
+
 def update_booking(booking: Booking):
     session: Session = DBSession()
     old_booking: Booking = session.query(Booking).filter(Booking.id == booking.id).first()
