@@ -90,9 +90,9 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_overview">
+      <widget class="QWidget" name="tab_details">
        <attribute name="title">
-        <string>Overview</string>
+        <string>Details</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="1" column="3">
@@ -103,7 +103,7 @@
          </widget>
         </item>
         <item row="0" column="1" colspan="3">
-         <widget class="QTableWidget" name="table_books">
+         <widget class="QTableWidget" name="table_bookings">
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>200</number>
           </attribute>

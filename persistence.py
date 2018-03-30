@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Time, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Time, Date, ForeignKey, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -19,7 +19,7 @@ class WorkingEntry(Base):
     comment = Column(String(1000), nullable=True)
 
     def __str__(self):
-        return "id: {}, belongs_to_day: {}, start_time: {}, end_time: {}, order: {}, commet: {}"\
+        return "id: {}, belongs_to_day: {}, start_time: {}, end_time: {}, order: {}, comment: {}"\
             .format(self.id, self.belongs_to_day, self.start_time, self.end_time, self.order, self.comment)
 
 
@@ -29,6 +29,7 @@ def insert_working_entry(belongs_to_day, start_time: time, end_time: time, order
                              comment=comment)
     session.add(new_entry)
     session.commit()
+    return new_entry
 
 
 def delete_working_entry(entry: WorkingEntry):
@@ -120,6 +121,66 @@ def find_working_day_by_date(dat: date):
 def find_all_working_days() -> dict:
     session: Session = DBSession()
     return session.query(WorkingDay).all()
+
+
+class Booking(Base):
+    __tablename__ = "BOOKING"
+
+    id = Column(Integer, primary_key=True)
+    belongs_to_day = Column(Integer, ForeignKey("WORKING_DAY.id"))
+    order = Column(String(250), nullable=False)
+    hours = Column(Float, nullable=False)
+    booked = Column(Boolean, default=False)
+    logged = Column(Boolean, default=False)
+    comment = Column(String(1000), nullable=True)
+
+    def __str__(self):
+        return "id: {}, belongs_to_day: {}, order: {}, hours: {}, " \
+               "booked: {}, logged: {}, comment: {}"\
+            .format(self.id, self.belongs_to_day, self.order, self.hours,
+                    self.booked, self.logged, self.comment)
+
+
+def insert_booking(belongs_to_day, order, hours, booked=False, logged=False, comment=None):
+    session: Session = DBSession()
+    new_booking = Booking(belongs_to_day=belongs_to_day, order=order, hours=hours, booked=booked, logged=logged,
+                          comment=comment)
+    session.add(new_booking)
+    session.commit()
+    return new_booking
+
+
+def delete_booking(booking: Booking):
+    session: Session = DBSession()
+    tar_booking = session.query(Booking).filter(Booking.id == booking.id).first()
+    session.delete(tar_booking)
+    session.commit()
+
+
+def update_booking(booking: Booking):
+    session: Session = DBSession()
+    old_booking: Booking = session.query(Booking).filter(Booking.id == booking.id).first()
+    old_booking.order = booking.order
+    old_booking.hours = booking.hours
+    old_booking.booked = booking.booked
+    old_booking.logged = booking.logged
+    old_booking.comment = booking.comment
+    session.commit()
+
+
+def find_booking_by_id(id):
+    session: Session = DBSession()
+    return session.query(Booking).filter(Booking.id == id).first()
+
+
+def find_booking_by_day(day: WorkingDay) -> list:
+    session: Session = DBSession()
+    return session.query(Booking).filter(Booking.belongs_to_day == day.id).all()
+
+
+def find_all_bookings() -> list:
+    session: Session = DBSession()
+    return session.query(Booking).all()
 
 
 # Don't move else it wouldn't create the correct schema!
