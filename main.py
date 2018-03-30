@@ -114,6 +114,7 @@ class MainWindow(QMainWindow):
 app = QApplication(sys.argv)
 app.setWindowIcon(Assets.load_icon())
 window = MainWindow()
+tray_icon = Assets.load_tray_icon(window)
 window.showMaximized()
 
 sys.exit(app.exec_())

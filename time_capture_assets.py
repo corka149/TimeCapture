@@ -1,4 +1,4 @@
-from qtpy import QtCore, QtGui
+from qtpy import QtCore, QtWidgets, QtGui
 
 
 class Assets:
@@ -13,3 +13,8 @@ class Assets:
         app_icon.addFile("assets/icons/64x64.jpeg", QtCore.QSize(64, 64))
         app_icon.addFile("assets/icons/128x128.png", QtCore.QSize(128, 128))
         return app_icon
+
+    @staticmethod
+    def load_tray_icon(parent=None) -> QtWidgets.QSystemTrayIcon:
+        tray_icon = QtWidgets.QSystemTrayIcon(Assets.load_icon(), parent)
+        return tray_icon
