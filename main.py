@@ -53,6 +53,7 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_addBookRow.clicked.connect(self.add_booking_row)
         self.ui.pushButton_saveBookRow.clicked.connect(self.save_booking_table)
         self.ui.pushButton_deleteEntityRow.clicked.connect(self.delete_entry_row)
+        self.ui.pushButton_deleteBookingRow.clicked.connect(self.delete_booking_row)
 
     def __transform_entity_table__(self):
         row = self.ui.table_times.rowCount()
@@ -151,7 +152,6 @@ class MainWindow(QMainWindow):
     def delete_entry_row(self):
         c_row = self.ui.table_times.currentRow()
         self.ui.table_times.removeRow(c_row)
-        self.time_capture_service.update_working_entries(self.__transform_entity_table__())
 
     def add_booking_row(self):
         row = self.ui.table_bookings.rowCount()
@@ -162,6 +162,10 @@ class MainWindow(QMainWindow):
         self.ui.table_bookings.setCellWidget(row, B_LOGGED, qcb)
         self.ui.table_bookings.setCellWidget(row, B_HOURS, QDoubleSpinBox(self.ui.table_bookings))
         self.ui.table_times.resizeRowsToContents()
+
+    def delete_booking_row(self):
+        c_row = self.ui.table_bookings.currentRow()
+        self.ui.table_bookings.removeRow(c_row)
 
 
 app = QApplication(sys.argv)
