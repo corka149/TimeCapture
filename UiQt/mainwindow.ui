@@ -22,7 +22,7 @@
       </property>
       <widget class="QWidget" name="tab_input">
        <attribute name="title">
-        <string>Input</string>
+        <string>Working times</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0" colspan="5">
@@ -99,7 +99,7 @@
       </widget>
       <widget class="QWidget" name="tab_details">
        <attribute name="title">
-        <string>Details</string>
+        <string>Bookings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="1" column="3">
@@ -115,7 +115,7 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="1" colspan="4">
+        <item row="0" column="1" colspan="5">
          <widget class="QTableWidget" name="table_bookings">
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>200</number>
@@ -157,7 +157,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="4">
+        <item row="1" column="5">
          <widget class="QPushButton" name="pushButton_saveBookRow">
           <property name="text">
            <string>Save</string>
@@ -168,6 +168,13 @@
          <widget class="QPushButton" name="pushButton_deleteBookingRow">
           <property name="text">
            <string>Delete row</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QPushButton" name="pushButton_copyTime">
+          <property name="text">
+           <string>Copy times</string>
           </property>
          </widget>
         </item>
