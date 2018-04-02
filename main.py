@@ -118,29 +118,50 @@ class MainWindow(QMainWindow):
             self.time_capture_service.add_new_working_day(working_day)
 
     def activate_details(self, item: QListWidgetItem):
-        row = 0
         self.ui.tabWidget_Details.setEnabled(True)
         self.time_capture_service.selected_day = item.text()
-        entries = self.time_capture_service.load_working_entries(item.text())
+        self.__clean_and_load_entries__(item.text())
+        self.__clean_and_load_bookings__(item.text())
 
-        for i in reversed(range(self.ui.table_times.rowCount())):
-            self.ui.table_times.removeRow(i)
+    def __clean_and_load_entries__(self, working_date: str):
+        row = 0
+        entries = self.time_capture_service.load_working_entries(working_date)
 
-        if entries is not None:
-            for e in entries:
-                self.ui.table_times.insertRow(row)
-                qte = QTimeEdit(self.ui.table_times)
-                qte.setTime(e[wee.START_TIME])
-                self.ui.table_times.setCellWidget(row, E_START_TIME_COL, qte)
+        clean_table(self.ui.table_times)
 
-                qte = QTimeEdit(self.ui.table_times)
-                qte.setTime(e[wee.END_TIME])
-                self.ui.table_times.setCellWidget(row, E_END_TIME_COL, qte)
+        for e in entries:
+            self.ui.table_times.insertRow(row)
+            qte = QTimeEdit(self.ui.table_times)
+            qte.setTime(e[wee.START_TIME])
+            self.ui.table_times.setCellWidget(row, E_START_TIME_COL, qte)
 
-                self.ui.table_times.setItem(row, E_ORDER_COL, QTableWidgetItem(e[wee.ORDER]))
-                self.ui.table_times.setItem(row, E_COMMENT_COL, QTableWidgetItem(e[wee.COMMENT]))
-                row += 1
+            qte = QTimeEdit(self.ui.table_times)
+            qte.setTime(e[wee.END_TIME])
+            self.ui.table_times.setCellWidget(row, E_END_TIME_COL, qte)
+
+            self.ui.table_times.setItem(row, E_ORDER_COL, QTableWidgetItem(e[wee.ORDER]))
+            self.ui.table_times.setItem(row, E_COMMENT_COL, QTableWidgetItem(e[wee.COMMENT]))
+            row += 1
             self.ui.table_times.resizeRowsToContents()
+
+    def __clean_and_load_bookings__(self, working_date: str):
+        row = 0
+        t: QTableWidget = self.ui.table_bookings
+        clean_table(t)
+        bookings = self.time_capture_service.load_bookings(working_date)
+        for b in bookings:
+            t.insertRow(row)
+            qcb = QCheckBox(self.ui.table_bookings)
+            qcb.setChecked(b.booked)
+            t.setCellWidget(row, B_BOOKED, qcb)
+            qcb = QCheckBox(self.ui.table_bookings)
+            qcb.setChecked(b.logged)
+            t.setCellWidget(row, B_LOGGED, qcb)
+            qdsb = QDoubleSpinBox(self.ui.table_bookings)
+            qdsb.setValue(b.hours)
+            t.setCellWidget(row, B_HOURS, qdsb)
+            t.resizeRowsToContents()
+            row += 1
 
     def add_entry_row(self):
         row = self.ui.table_times.rowCount()
@@ -166,6 +187,11 @@ class MainWindow(QMainWindow):
     def delete_booking_row(self):
         c_row = self.ui.table_bookings.currentRow()
         self.ui.table_bookings.removeRow(c_row)
+
+
+def clean_table(table):
+    for i in reversed(range(table.rowCount())):
+        table.removeRow(i)
 
 
 app = QApplication(sys.argv)

@@ -37,19 +37,27 @@ class TimeCaptureService:
         p.insert_working_day(wd)
 
     def load_working_entries(self, working_date: str) -> list:
-        val = working_date.split("-")
-        d = date(int(val[0]), int(val[1]), int(val[2]))
-        wd: WorkingDay = p.find_working_day_by_date(d)
+        d = transform_str_to_date(working_date)
         we_list = list()
-        for we in p.find_all_working_entries():
-            if wd.id == we.belongs_to_day:
-                we_list.append(transform_entry_dict(we))
+        if d is not None:
+            wd: WorkingDay = p.find_working_day_by_date(d)
+            for we in p.find_all_working_entries():
+                if wd.id == we.belongs_to_day:
+                    we_list.append(transform_entry_dict(we))
         return we_list
 
     def update_bookings(self, bookings):
         p.delete_booking_by_day(self.selected_day)
         for r in bookings:
             p.insert_booking(self.selected_day.id, r[bk.ORDER], r[bk.HOURS], r[bk.BOOKED], r[bk.LOGGED], r[bk.COMMENT])
+
+    def load_bookings(self, working_date: str):
+        d = transform_str_to_date(working_date)
+        bookings = list()
+        if d is not None:
+            wd: WorkingDay = p.find_working_day_by_date(d)
+            bookings = p.find_booking_by_day(wd)
+        return bookings
 
 
 def transform_entry_dict(entry: WorkingEntry) -> dict:
@@ -59,3 +67,11 @@ def transform_entry_dict(entry: WorkingEntry) -> dict:
     d[wee.ORDER] = entry.order
     d[wee.COMMENT] = entry.comment
     return d
+
+
+def transform_str_to_date(wd: str) -> date:
+    val = wd.split("-")
+    if len(val) == 3:
+        return date(int(val[0]), int(val[1]), int(val[2]))
+    else:
+        return None
