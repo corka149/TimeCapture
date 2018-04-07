@@ -1,5 +1,5 @@
 import persistence as p
-from persistence import WorkingDay, WorkingEntry
+from persistence import WorkingDay, WorkingEntry, Booking
 from datetime import date
 from bindings import WorkingEntryKey as wee, BookingKey as bk
 
@@ -41,9 +41,7 @@ class TimeCaptureService:
         we_list = list()
         if d is not None:
             wd: WorkingDay = p.find_working_day_by_date(d)
-            for we in p.find_all_working_entries():
-                if wd.id == we.belongs_to_day:
-                    we_list.append(transform_entry_dict(we))
+            we_list = [transform_entry_dict(we) for we in p.find_working_entries_by_day(wd.id)]
         return we_list
 
     def update_bookings(self, bookings):
@@ -51,12 +49,12 @@ class TimeCaptureService:
         for r in bookings:
             p.insert_booking(self.selected_day.id, r[bk.ORDER], r[bk.HOURS], r[bk.BOOKED], r[bk.LOGGED], r[bk.COMMENT])
 
-    def load_bookings(self, working_date: str):
+    def load_bookings(self, working_date: str) -> list:
         d = transform_str_to_date(working_date)
         bookings = list()
         if d is not None:
             wd: WorkingDay = p.find_working_day_by_date(d)
-            bookings = p.find_booking_by_day(wd)
+            bookings = [transform_booking_to_dict(b) for b in p.find_booking_by_day(wd)]
         return bookings
 
 
@@ -66,6 +64,16 @@ def transform_entry_dict(entry: WorkingEntry) -> dict:
     d[wee.END_TIME] = entry.end_time
     d[wee.ORDER] = entry.order
     d[wee.COMMENT] = entry.comment
+    return d
+
+
+def transform_booking_to_dict(booking: Booking):
+    d = dict()
+    d[bk.ORDER] = booking.order
+    d[bk.HOURS] = booking.hours
+    d[bk.BOOKED] = booking.booked
+    d[bk.LOGGED] = booking.logged
+    d[bk.COMMENT] = booking.comment
     return d
 
 

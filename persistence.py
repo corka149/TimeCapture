@@ -67,6 +67,11 @@ def find_all_working_entries():
     return session.query(WorkingEntry).all()
 
 
+def find_working_entries_by_day(working_day_id):
+    session: Session = DBSession()
+    return session.query(WorkingEntry).filter(WorkingEntry.belongs_to_day == working_day_id).all()
+
+
 class WorkingDay(Base):
     __tablename__ = "WORKING_DAY"
 
