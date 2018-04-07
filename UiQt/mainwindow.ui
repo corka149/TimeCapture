@@ -25,7 +25,7 @@
         <string>Working times</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0" colspan="5">
+        <item row="0" column="0" colspan="8">
          <widget class="QTableWidget" name="table_times">
           <attribute name="horizontalHeaderCascadingSectionResizes">
            <bool>true</bool>
@@ -68,7 +68,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="1" column="5">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -81,7 +81,7 @@
           </property>
          </spacer>
         </item>
-        <item row="1" column="4">
+        <item row="1" column="7">
          <widget class="QPushButton" name="pushButton_save">
           <property name="text">
            <string>Save</string>
@@ -94,6 +94,33 @@
            <string>Delete row</string>
           </property>
          </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="pushButton_rowUp">
+          <property name="text">
+           <string>Up</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QPushButton" name="pushButton_rowDown">
+          <property name="text">
+           <string>Down</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
