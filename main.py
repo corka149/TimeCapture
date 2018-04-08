@@ -214,13 +214,17 @@ class MainWindow(QMainWindow):
 
     def lift_up_entry_row(self):
         c_row = self.ui.table_times.currentRow()
-        if c_row != 0:
-            switch_rows(self.ui.table_times, c_row, c_row - 1)
+        new_row = c_row - 1
+        if c_row > 0:
+            switch_rows(self.ui.table_times, c_row, new_row)
+            self.ui.table_times.setCurrentCell(new_row, self.ui.table_times.currentColumn())
 
     def lift_down_entry_row(self):
         c_row = self.ui.table_times.currentRow()
+        new_row = c_row + 1
         if c_row != (self.ui.table_times.rowCount() - 1):
-            switch_rows(self.ui.table_times, c_row, c_row + 1)
+            switch_rows(self.ui.table_times, c_row, new_row)
+            self.ui.table_times.setCurrentCell(new_row, self.ui.table_times.currentColumn())
 
     def add_booking_row(self):
         row = self.ui.table_bookings.rowCount()
@@ -252,16 +256,16 @@ def switch_rows(table: QTableWidget, old_position, new_position):
             table.setItem(old_position, col_count, QTableWidgetItem(new_text))
             table.setItem(new_position, col_count, QTableWidgetItem(old_text))
         else:
-            # TODO fix switching cells with widget
-            old_cell_widget: QTimeEdit = table.cellWidget(old_position, col_count)
-            new_cell_widget: QTimeEdit = table.cellWidget(new_position, col_count)
+            old_cell_widget = table.cellWidget(old_position, col_count)
+            new_cell_widget = table.cellWidget(new_position, col_count)
             if old_cell_widget is not None and new_cell_widget is not None:
-                qte = QTimeEdit(table)
-                qte.setTime(new_cell_widget.time())
-                table.setCellWidget(old_position, col_count, qte)
-                qte = QTimeEdit(table)
-                qte.setTime(old_cell_widget.time())
-                table.setCellWidget(new_position, col_count, qte)
+                if isinstance(old_cell_widget, QTimeEdit) and isinstance(new_cell_widget, QTimeEdit):
+                    qte = QTimeEdit(table)
+                    qte.setTime(new_cell_widget.time())
+                    table.setCellWidget(old_position, col_count, qte)
+                    qte = QTimeEdit(table)
+                    qte.setTime(old_cell_widget.time())
+                    table.setCellWidget(new_position, col_count, qte)
 
 
 def subtract_times(minuend: time, subtrahend: time) -> timedelta:
