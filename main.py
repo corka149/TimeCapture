@@ -56,8 +56,10 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_deleteEntityRow.clicked.connect(self.delete_entry_row)
         self.ui.pushButton_deleteBookingRow.clicked.connect(self.delete_booking_row)
         self.ui.pushButton_copyTime.clicked.connect(self.copy_entries_to_bookings)
-        self.ui.pushButton_rowUp.clicked.connect(self.lift_up_entry_row)
-        self.ui.pushButton_rowDown.clicked.connect(self.lift_down_entry_row)
+        self.ui.pushButton_rowUp.clicked.connect(self.shift_up_entry_row)
+        self.ui.pushButton_rowDown.clicked.connect(self.shift_down_entry_row)
+        self.ui.pushButton_bookingRowUp.clicked.connect(self.shift_up_booking_row)
+        self.ui.pushButton_bookingRowDown.clicked.connect(self.shift_down_booking_row)
 
     def __transform_entity_table__(self) -> list:
         row = self.ui.table_times.rowCount()
@@ -212,17 +214,17 @@ class MainWindow(QMainWindow):
         c_row = self.ui.table_times.currentRow()
         self.ui.table_times.removeRow(c_row)
 
-    def lift_up_entry_row(self):
+    def shift_up_entry_row(self):
         c_row = self.ui.table_times.currentRow()
         new_row = c_row - 1
         if c_row > 0:
             switch_rows(self.ui.table_times, c_row, new_row)
             self.ui.table_times.setCurrentCell(new_row, self.ui.table_times.currentColumn())
 
-    def lift_down_entry_row(self):
+    def shift_down_entry_row(self):
         c_row = self.ui.table_times.currentRow()
         new_row = c_row + 1
-        if c_row != (self.ui.table_times.rowCount() - 1):
+        if c_row < (self.ui.table_times.rowCount() - 1):
             switch_rows(self.ui.table_times, c_row, new_row)
             self.ui.table_times.setCurrentCell(new_row, self.ui.table_times.currentColumn())
 
@@ -240,6 +242,20 @@ class MainWindow(QMainWindow):
         c_row = self.ui.table_bookings.currentRow()
         self.ui.table_bookings.removeRow(c_row)
 
+    def shift_up_booking_row(self):
+        c_row = self.ui.table_bookings.currentRow()
+        new_row = c_row - 1
+        if c_row > 0:
+            switch_rows(self.ui.table_bookings, c_row, new_row)
+            self.ui.table_bookings.setCurrentCell(new_row, self.ui.table_bookings.currentColumn())
+
+    def shift_down_booking_row(self):
+        c_row = self.ui.table_bookings.currentRow()
+        new_row = c_row + 1
+        if c_row < (self.ui.table_bookings.rowCount() - 1):
+            switch_rows(self.ui.table_bookings, c_row, new_row)
+            self.ui.table_bookings.setCurrentCell(new_row, self.ui.table_bookings.currentColumn())
+
 
 def clean_table(table):
     for i in reversed(range(table.rowCount())):
@@ -247,25 +263,39 @@ def clean_table(table):
 
 
 def switch_rows(table: QTableWidget, old_position, new_position):
-    for col_count in range(table.columnCount()):
-        old_item = table.item(old_position, col_count)
-        new_item = table.item(new_position, col_count)
+    for col_index in range(table.columnCount()):
+        old_item = table.item(old_position, col_index)
+        new_item = table.item(new_position, col_index)
         if old_item is not None and new_item is not None:
             old_text = old_item.text()
             new_text = new_item.text()
-            table.setItem(old_position, col_count, QTableWidgetItem(new_text))
-            table.setItem(new_position, col_count, QTableWidgetItem(old_text))
+            table.setItem(old_position, col_index, QTableWidgetItem(new_text))
+            table.setItem(new_position, col_index, QTableWidgetItem(old_text))
         else:
-            old_cell_widget = table.cellWidget(old_position, col_count)
-            new_cell_widget = table.cellWidget(new_position, col_count)
+            old_cell_widget = table.cellWidget(old_position, col_index)
+            new_cell_widget = table.cellWidget(new_position, col_index)
             if old_cell_widget is not None and new_cell_widget is not None:
                 if isinstance(old_cell_widget, QTimeEdit) and isinstance(new_cell_widget, QTimeEdit):
                     qte = QTimeEdit(table)
                     qte.setTime(new_cell_widget.time())
-                    table.setCellWidget(old_position, col_count, qte)
+                    table.setCellWidget(old_position, col_index, qte)
                     qte = QTimeEdit(table)
                     qte.setTime(old_cell_widget.time())
-                    table.setCellWidget(new_position, col_count, qte)
+                    table.setCellWidget(new_position, col_index, qte)
+                if isinstance(old_cell_widget, QDoubleSpinBox) and isinstance(new_cell_widget, QDoubleSpinBox):
+                    qdsb = QDoubleSpinBox(table)
+                    qdsb.setValue(new_cell_widget.value())
+                    table.setCellWidget(old_position, col_index, qdsb)
+                    qdsb = QDoubleSpinBox(table)
+                    qdsb.setValue(old_cell_widget.value())
+                    table.setCellWidget(new_position, col_index, qdsb)
+                if isinstance(old_cell_widget, QCheckBox) and isinstance(new_cell_widget, QCheckBox):
+                    qcb = QCheckBox(table)
+                    qcb.setChecked(new_cell_widget.isChecked())
+                    table.setCellWidget(old_position, col_index, qcb)
+                    qcb = QCheckBox(table)
+                    qcb.setChecked(old_cell_widget.isChecked())
+                    table.setCellWidget(new_position, col_index, qcb)
 
 
 def subtract_times(minuend: time, subtrahend: time) -> timedelta:
