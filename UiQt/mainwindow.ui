@@ -25,7 +25,7 @@
         <string>Working times</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0" colspan="8">
+        <item row="0" column="0" colspan="9">
          <widget class="QTableWidget" name="table_times">
           <attribute name="horizontalHeaderCascadingSectionResizes">
            <bool>true</bool>
@@ -61,14 +61,14 @@
           </column>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
          <widget class="QPushButton" name="pushButton_addRow">
           <property name="text">
            <string>Add row</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="5">
+        <item row="2" column="6">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -81,35 +81,35 @@
           </property>
          </spacer>
         </item>
-        <item row="1" column="7">
+        <item row="2" column="8">
          <widget class="QPushButton" name="pushButton_save">
           <property name="text">
            <string>Save</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="2">
          <widget class="QPushButton" name="pushButton_deleteEntityRow">
           <property name="text">
            <string>Delete row</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="3">
+        <item row="2" column="4">
          <widget class="QPushButton" name="pushButton_rowUp">
           <property name="text">
            <string>Up</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="4">
+        <item row="2" column="5">
          <widget class="QPushButton" name="pushButton_rowDown">
           <property name="text">
            <string>Down</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="2" column="3">
          <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -129,20 +129,6 @@
         <string>Bookings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="1" column="4">
-         <widget class="QPushButton" name="pushButton_bookingRowUp">
-          <property name="text">
-           <string>Up</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="5">
-         <widget class="QPushButton" name="pushButton_bookingRowDown">
-          <property name="text">
-           <string>Down</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1" colspan="8">
          <widget class="QTableWidget" name="table_bookings">
           <attribute name="horizontalHeaderDefaultSectionSize">
@@ -178,7 +164,21 @@
           </column>
          </widget>
         </item>
-        <item row="1" column="6">
+        <item row="2" column="4">
+         <widget class="QPushButton" name="pushButton_bookingRowUp">
+          <property name="text">
+           <string>Up</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="5">
+         <widget class="QPushButton" name="pushButton_bookingRowDown">
+          <property name="text">
+           <string>Down</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="6">
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -191,35 +191,35 @@
           </property>
          </spacer>
         </item>
-        <item row="1" column="1">
+        <item row="2" column="1">
          <widget class="QPushButton" name="pushButton_addBookRow">
           <property name="text">
            <string>Add row</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="8">
+        <item row="2" column="8">
          <widget class="QPushButton" name="pushButton_saveBookRow">
           <property name="text">
            <string>Save</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="2" column="2">
          <widget class="QPushButton" name="pushButton_deleteBookingRow">
           <property name="text">
            <string>Delete row</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="7">
+        <item row="2" column="7">
          <widget class="QPushButton" name="pushButton_copyTime">
           <property name="text">
            <string>Copy times</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="3">
+        <item row="2" column="3">
          <spacer name="horizontalSpacer_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -231,6 +231,13 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="1" column="4">
+         <widget class="QLabel" name="label_sumHours">
+          <property name="text">
+           <string>Sum: 0 hrs</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

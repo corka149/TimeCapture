@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
     def __connect__(self):
         self.ui.action_AddDay.triggered.connect(self.add_new_day)
         self.ui.action_Exit.triggered.connect(self.close)
-        self.ui.list_days.itemClicked.connect(self.activate_details)
+        self.ui.list_days.itemClicked.connect(self.activated_details)
         self.ui.pushButton_addRow.clicked.connect(self.add_entry_row)
         self.ui.pushButton_save.clicked.connect(self.save_entity_table)
         self.ui.pushButton_addBookRow.clicked.connect(self.add_booking_row)
@@ -178,11 +178,18 @@ class MainWindow(QMainWindow):
             t.resizeRowsToContents()
             row += 1
 
+    def __sum_booked_hours__(self):
+        hr_sum = 0.
+        for i in range(self.ui.table_bookings.rowCount()):
+            hr_sum += self.ui.table_bookings.cellWidget(i, B_HOURS).value()
+        return hr_sum
+
     def save_entity_table(self):
         self.time_capture_service.update_working_entries(self.__transform_entity_table__())
 
     def save_booking_table(self):
         self.time_capture_service.update_bookings(self.__transform_booking_table__())
+        self.__sum_booked_hours__()
 
     def add_new_day(self):
         self.datedialog.exec_()
@@ -193,15 +200,17 @@ class MainWindow(QMainWindow):
             self.ui.list_days.addItem(str(working_day))
             self.time_capture_service.add_new_working_day(working_day)
 
-    def activate_details(self, item: QListWidgetItem):
+    def activated_details(self, item: QListWidgetItem):
         self.ui.tabWidget_Details.setEnabled(True)
         self.time_capture_service.selected_day = item.text()
         self.__clean_and_load_entries__(item.text())
         self.__clean_and_load_bookings__(item.text())
+        self.ui.label_sumHours.setText("Sum: {} hrs".format(self.__sum_booked_hours__()))
 
     def copy_entries_to_bookings(self):
         if self.time_capture_service.selected_day is not None:
             self.__clean_and_load_bookings__()
+        self.ui.label_sumHours.setText("Sum: {} hrs".format(self.__sum_booked_hours__()))
 
     def add_entry_row(self):
         row = self.ui.table_times.rowCount()
