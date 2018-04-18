@@ -24,6 +24,8 @@ B_BOOKED = 2
 B_LOGGED = 3
 B_COMMENT = 4
 
+days = {0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 4: "Friday", 5: "Saturday", 6: "Sunday"}
+
 
 class MainWindow(QMainWindow):
 
@@ -43,7 +45,14 @@ class MainWindow(QMainWindow):
 
     def __setup__list__(self):
         for k in self.time_capture_service.working_dates:
-            self.ui.list_days.addItem(str(k))
+            sum = 0
+            print(k)
+            for booking in self.time_capture_service.load_bookings(str(k)):
+                sum += booking[bk.HOURS]
+
+            qlwi = QListWidgetItem(str(k))
+            qlwi.setToolTip("Day: {} | Sum: {} hrs".format(days[k.weekday()], sum))
+            self.ui.list_days.addItem(qlwi)
 
     def __connect__(self):
         self.ui.action_AddDay.triggered.connect(self.add_new_day)
