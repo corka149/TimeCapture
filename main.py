@@ -1,6 +1,7 @@
 import sys
 from qtpy.QtWidgets import QMainWindow, QApplication, QListWidgetItem, QTimeEdit, QTableWidgetItem, QCheckBox, \
-    QDoubleSpinBox, QTableWidget
+    QDoubleSpinBox, QTableWidget, QShortcut
+from qtpy.QtGui import QKeySequence
 from UiQt.mainwindow import Ui_MainWindow
 from datedialog import DateDialog
 from time_capture_service import TimeCaptureService
@@ -26,6 +27,9 @@ B_COMMENT = 4
 
 days = {0: "Monday", 1: "Tuesday", 2: "Wednesday", 3: "Thursday", 4: "Friday", 5: "Saturday", 6: "Sunday"}
 
+TAB_ENTRY = 0
+TAB_BOOKING = 1
+
 
 class MainWindow(QMainWindow):
 
@@ -39,14 +43,15 @@ class MainWindow(QMainWindow):
 
         self.datedialog = DateDialog(self)
         self.ui.tabWidget_Details.setEnabled(False)
+        self.selected_tab = TAB_ENTRY
 
         self.__connect__()
         self.__setup__list__()
+        self.__set_tool_tips__()
 
     def __setup__list__(self):
         for k in self.time_capture_service.working_dates:
             sum = 0
-            print(k)
             for booking in self.time_capture_service.load_bookings(str(k)):
                 sum += booking[bk.HOURS]
 
@@ -69,6 +74,18 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_rowDown.clicked.connect(self.shift_down_entry_row)
         self.ui.pushButton_bookingRowUp.clicked.connect(self.shift_up_booking_row)
         self.ui.pushButton_bookingRowDown.clicked.connect(self.shift_down_booking_row)
+        self.ui.tabWidget_Details.currentChanged.connect(self.__set_selected_tab__)
+        QShortcut(QKeySequence("Alt+a"), self, self.hit_alt_a)
+        QShortcut(QKeySequence("Alt+d"), self, self.hit_alt_d)
+        QShortcut(QKeySequence("Alt+s"), self, self.hit_alt_s)
+
+    def __set_tool_tips__(self):
+        self.ui.pushButton_addRow.setToolTip("Alt+a")
+        self.ui.pushButton_save.setToolTip("Alt+s")
+        self.ui.pushButton_deleteEntityRow.setToolTip("Alt+d")
+        self.ui.pushButton_addBookRow.setToolTip("Alt+a")
+        self.ui.pushButton_saveBookRow.setToolTip("Alt+s")
+        self.ui.pushButton_deleteBookingRow.setToolTip("Alt+d")
 
     def __transform_entity_table__(self) -> list:
         row = self.ui.table_times.rowCount()
@@ -193,6 +210,9 @@ class MainWindow(QMainWindow):
             hr_sum += self.ui.table_bookings.cellWidget(i, B_HOURS).value()
         return hr_sum
 
+    def __set_selected_tab__(self, i):
+        self.selected_tab = i
+
     def save_entity_table(self):
         self.time_capture_service.update_working_entries(self.__transform_entity_table__())
 
@@ -224,7 +244,9 @@ class MainWindow(QMainWindow):
     def add_entry_row(self):
         row = self.ui.table_times.rowCount()
         self.ui.table_times.insertRow(row)
-        self.ui.table_times.setCellWidget(row, E_START_TIME_COL, QTimeEdit(self.ui.table_times))
+        qte = QTimeEdit(self.ui.table_times)
+        qte.setFocus()
+        self.ui.table_times.setCellWidget(row, E_START_TIME_COL, qte)
         self.ui.table_times.setCellWidget(row, E_END_TIME_COL, QTimeEdit(self.ui.table_times))
         self.ui.table_times.resizeRowsToContents()
 
@@ -254,7 +276,7 @@ class MainWindow(QMainWindow):
         qcb = QCheckBox(self.ui.table_bookings)
         self.ui.table_bookings.setCellWidget(row, B_LOGGED, qcb)
         self.ui.table_bookings.setCellWidget(row, B_HOURS, QDoubleSpinBox(self.ui.table_bookings))
-        self.ui.table_times.resizeRowsToContents()
+        self.ui.table_bookings.resizeRowsToContents()
 
     def delete_booking_row(self):
         c_row = self.ui.table_bookings.currentRow()
@@ -273,6 +295,27 @@ class MainWindow(QMainWindow):
         if c_row < (self.ui.table_bookings.rowCount() - 1):
             switch_rows(self.ui.table_bookings, c_row, new_row)
             self.ui.table_bookings.setCurrentCell(new_row, self.ui.table_bookings.currentColumn())
+
+    def hit_alt_a(self):
+        if self.ui.tabWidget_Details.isEnabled():
+            if TAB_ENTRY == self.selected_tab:
+                self.add_entry_row()
+            elif TAB_BOOKING == self.selected_tab:
+                self.add_booking_row()
+
+    def hit_alt_s(self):
+        if self.ui.tabWidget_Details.isEnabled():
+            if TAB_ENTRY == self.selected_tab:
+                self.save_entity_table()
+            elif TAB_BOOKING == self.selected_tab:
+                self.save_booking_table()
+
+    def hit_alt_d(self):
+        if self.ui.tabWidget_Details.isEnabled():
+            if TAB_ENTRY == self.selected_tab:
+                self.delete_entry_row()
+            elif TAB_BOOKING == self.selected_tab:
+                self.delete_booking_row()
 
 
 def clean_table(table):

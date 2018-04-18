@@ -27,6 +27,9 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0" colspan="9">
          <widget class="QTableWidget" name="table_times">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
           <attribute name="horizontalHeaderCascadingSectionResizes">
            <bool>true</bool>
           </attribute>

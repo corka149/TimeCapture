@@ -27,6 +27,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setSpacing(6)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.table_times = QtWidgets.QTableWidget(self.tab_input)
+        self.table_times.setAlternatingRowColors(True)
         self.table_times.setObjectName("table_times")
         self.table_times.setColumnCount(4)
         self.table_times.setRowCount(0)
