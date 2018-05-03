@@ -1,0 +1,3 @@
+sqlalchemy
+qtpy
+PyQt5
