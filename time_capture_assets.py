@@ -5,6 +5,11 @@ class Assets:
 
     @staticmethod
     def load_icon() -> QtGui.QIcon:
+        """
+        Loads the time capture icons.
+
+        :return app_icon
+        """
         app_icon = QtGui.QIcon()
         app_icon.addFile("assets/icons/16x16.jpeg", QtCore.QSize(16, 16))
         app_icon.addFile("assets/icons/24x24.jpeg", QtCore.QSize(24, 24))
@@ -16,5 +21,11 @@ class Assets:
 
     @staticmethod
     def load_tray_icon(parent=None) -> QtWidgets.QSystemTrayIcon:
+        """
+        Load the system tray icon of time capture.
+
+        :param parent:
+        :return tray_icon:
+        """
         tray_icon = QtWidgets.QSystemTrayIcon(Assets.load_icon(), parent)
         return tray_icon

@@ -9,6 +9,9 @@ Base = declarative_base()
 
 
 class WorkingEntry(Base):
+    """
+    A working entry is an activity which starts and ends at a specific time. Each entry belongs to an order.
+    """
     __tablename__ = "WORKING_ENTRY"
 
     id = Column(Integer, primary_key=True)
@@ -73,6 +76,9 @@ def find_working_entries_by_day(working_day_id):
 
 
 class WorkingDay(Base):
+    """
+    A working is a complete day from a workers perspective.
+    """
     __tablename__ = "WORKING_DAY"
 
     id = Column(Integer, primary_key=True)
@@ -129,6 +135,9 @@ def find_all_working_days() -> dict:
 
 
 class Booking(Base):
+    """
+    A booking sums up 1 to n entries.
+    """
     __tablename__ = "BOOKING"
 
     id = Column(Integer, primary_key=True)

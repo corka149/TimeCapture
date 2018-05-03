@@ -4,6 +4,9 @@ from datetime import date
 
 
 class DateDialog(QDialog):
+    """
+    Dialog for selecting a working day.
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)

@@ -5,6 +5,9 @@ from bindings import WorkingEntryKey as wee, BookingKey as bk
 
 
 class TimeCaptureService:
+    """
+    Contains the business logic and manages the persistence of bookings, days and entries.
+    """
 
     def __init__(self):
         self.working_days: list = p.find_all_working_days()

@@ -50,6 +50,11 @@ class MainWindow(QMainWindow):
         self.__set_tool_tips__()
 
     def __setup__list__(self):
+        """
+        Load working days and sets tooltips for list items.
+
+        :return:
+        """
         for k in self.time_capture_service.working_dates:
             sum = 0
             for booking in self.time_capture_service.load_bookings(str(k)):
@@ -60,6 +65,11 @@ class MainWindow(QMainWindow):
             self.ui.list_days.addItem(qlwi)
 
     def __connect__(self):
+        """
+        Connects events to event handlers.
+
+        :return:
+        """
         self.ui.action_AddDay.triggered.connect(self.add_new_day)
         self.ui.action_Exit.triggered.connect(self.close)
         self.ui.list_days.itemClicked.connect(self.activated_details)
@@ -80,6 +90,11 @@ class MainWindow(QMainWindow):
         QShortcut(QKeySequence("Alt+s"), self, self.hit_alt_s)
 
     def __set_tool_tips__(self):
+        """
+        Sets tool tips for shortcuts on buttons.
+
+        :return:
+        """
         self.ui.pushButton_addRow.setToolTip("Alt+a")
         self.ui.pushButton_save.setToolTip("Alt+s")
         self.ui.pushButton_deleteEntityRow.setToolTip("Alt+d")
@@ -88,6 +103,11 @@ class MainWindow(QMainWindow):
         self.ui.pushButton_deleteBookingRow.setToolTip("Alt+d")
 
     def __transform_entity_table__(self) -> list:
+        """
+        Gathers working entries and transform them into a list.
+
+        :return list of rows:
+        """
         row = self.ui.table_times.rowCount()
         data = list()
 
@@ -115,6 +135,7 @@ class MainWindow(QMainWindow):
     def __convert_entities_to_bookings__(self):
         """
         Converts the entities to a bookings and add them to the booking table.
+
         :return:
         """
         entities = self.__transform_entity_table__()
@@ -133,6 +154,11 @@ class MainWindow(QMainWindow):
         return bookings
 
     def __transform_booking_table__(self) -> list:
+        """
+        Gathers bookings and transform them into a list.
+
+        :return list of bookings:
+        """
         row = self.ui.table_bookings.rowCount()
         data = list()
 
@@ -155,6 +181,12 @@ class MainWindow(QMainWindow):
         return data
 
     def __clean_and_load_entries__(self, working_date: str):
+        """
+        Cleans entry table when switch working day.
+
+        :param working_date:
+        :return:
+        """
         row = 0
         entries = self.time_capture_service.load_working_entries(working_date)
 
@@ -176,6 +208,12 @@ class MainWindow(QMainWindow):
             self.ui.table_times.resizeRowsToContents()
 
     def __clean_and_load_bookings__(self, working_date: str=None):
+        """
+        Cleans booking table when switch working day.
+
+        :param working_date:
+        :return:
+        """
         row = 0
         t: QTableWidget = self.ui.table_bookings
         clean_table(t)
@@ -205,6 +243,11 @@ class MainWindow(QMainWindow):
             row += 1
 
     def __sum_booked_hours__(self):
+        """
+        Sums up the working entries to working hours of day.
+
+        :return hour_sum:
+        """
         hr_sum = 0.
         for i in range(self.ui.table_bookings.rowCount()):
             hr_sum += self.ui.table_bookings.cellWidget(i, B_HOURS).value()
@@ -230,6 +273,12 @@ class MainWindow(QMainWindow):
             self.time_capture_service.add_new_working_day(working_day)
 
     def activated_details(self, item: QListWidgetItem):
+        """
+        Handles context switch when another working day was selected in the left list.
+
+        :param item:
+        :return:
+        """
         self.ui.tabWidget_Details.setEnabled(True)
         self.time_capture_service.selected_day = item.text()
         self.__clean_and_load_entries__(item.text())
@@ -319,11 +368,27 @@ class MainWindow(QMainWindow):
 
 
 def clean_table(table):
+    """
+    Helper function to clean up table.
+    Works for every table.
+
+    :param table:
+    :return:
+    """
     for i in reversed(range(table.rowCount())):
         table.removeRow(i)
 
 
 def switch_rows(table: QTableWidget, old_position, new_position):
+    """
+    Helper function to switch a row in a table.
+    Works for booking and entry table.
+
+    :param table:
+    :param old_position:
+    :param new_position:
+    :return:
+    """
     for col_index in range(table.columnCount()):
         old_item = table.item(old_position, col_index)
         new_item = table.item(new_position, col_index)
@@ -363,11 +428,11 @@ def subtract_times(minuend: time, subtrahend: time) -> timedelta:
     return datetime.combine(date.today(), minuend) - datetime.combine(date.today(), subtrahend)
 
 
-app = QApplication(sys.argv)
-app.setWindowIcon(Assets.load_icon())
-window = MainWindow()
-tray_icon = Assets.load_tray_icon(window)
-window.showMaximized()
+if "main" in __name__:
+    app = QApplication(sys.argv)
+    app.setWindowIcon(Assets.load_icon())
+    window = MainWindow()
+    tray_icon = Assets.load_tray_icon(window)
+    window.showMaximized()
 
-sys.exit(app.exec_())
-
+    sys.exit(app.exec_())
