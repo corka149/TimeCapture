@@ -62,6 +62,12 @@ class TimeCaptureService:
 
 
 def transform_entry_dict(entry: WorkingEntry) -> dict:
+    """
+    Converts a working entry into a dict.
+
+    :param entry:
+    :return: booking_dict
+    """
     d = dict()
     d[wee.START_TIME] = entry.start_time
     d[wee.END_TIME] = entry.end_time
@@ -71,6 +77,12 @@ def transform_entry_dict(entry: WorkingEntry) -> dict:
 
 
 def transform_booking_to_dict(booking: Booking):
+    """
+    Converts a booking into a dict.
+
+    :param booking:
+    :return: booking_dict
+    """
     d = dict()
     d[bk.ORDER] = booking.order
     d[bk.HOURS] = booking.hours
